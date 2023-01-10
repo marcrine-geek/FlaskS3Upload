@@ -5,7 +5,13 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 # UPLOAD_FOLDER = "uploads"
-BUCKET = "anothertrialbucketdamn"
+import boto3
+
+s3 = boto3.client('s3',
+                    aws_access_key_id='AKIARKSJ3WF3JY6MCM6Q',
+                    aws_secret_access_key= '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'
+                     )
+BUCKET = "washwashbucket"
 
 @app.route("/")
 def home():
@@ -23,10 +29,11 @@ def upload():
         img = request.files['file']
         if img:
                 filename = secure_filename(img.filename)
-                img.save(filename)
-                upload_file(
+                # img.save(filename)
+                s3.upload_file(
                     filename,
-                    BUCKET
+                    BUCKET,
+                    Key = filename
                 )
                 
         return redirect("/")
